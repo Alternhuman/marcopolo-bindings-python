@@ -4,7 +4,7 @@ import json, socket, sys, os
 import socket, ssl, re # Address validation
 import pwd
 
-from marcopolo.bindings import conf
+from marcopolo.polo import conf
 import six
 
 from marcopolo.bindings.utils import verify_ip
@@ -70,7 +70,7 @@ class Polo(object):
         else:
             return ("", None)
 
-    def publish_service(self, service, multicast_groups=conf.MULTICAST_ADDRS, permanent=False, root=False):
+    def publish_service(self, service, params={}, multicast_groups=conf.MULTICAST_ADDRS, permanent=False, root=False):
         """
         Registers a service during execution time. See :ref:`/services/intro/`.
         
@@ -100,7 +100,7 @@ class Polo(object):
 
         token = self.get_token()
 
-        #Verify user input. TODO: multicast_groups can be an array or an IP
+        
         error = False
         if not isinstance(service, six.string_types):
             raise PoloException("The name of the service %s is invalid" % service)
@@ -115,7 +115,7 @@ class Polo(object):
         faulty_ip = ""
         reason = ""
         for ip in multicast_groups:
-            #TODO: Use verify_ip
+            
             if not isinstance(ip, six.string_types):
                 error = True
                 faulty_ip = ip
@@ -152,6 +152,7 @@ class Polo(object):
         message_dict["Command"]= "Register"
         message_dict["Args"] = {"token":token,
                                 "service": service, 
+                                "params": params,
                                 "multicast_groups":[g for g in multicast_groups], 
                                 "permanent": permanent, 
                                 "root":root}
@@ -193,7 +194,8 @@ class Polo(object):
             error = True
 
         if error or data == -1:
-            raise PoloInternalException("Error during internal communication")
+            reason = "No data received"
+            raise PoloInternalException("Error during internal communication. %s" % reason)
         error = False
         
         try:
@@ -202,7 +204,8 @@ class Polo(object):
             error = True
 
         if error:
-            raise PoloInternalException("Error during internal communication")
+            reason = "Error on decoding"
+            raise PoloInternalException("Error during internal communication. %s" % reason)
 
         try:
             parsed_data = json.loads(data_dec)#json.JSONDecoder(parse_constant=False).decode(data)
@@ -221,12 +224,14 @@ class Polo(object):
                 raise PoloException("Error in publishing %s: '%s'" % (service, parsed_data.get("Error")))
         
             else:
-                raise PoloInternalException("Error during internal communication")
+                reason = "No valid fields"
+                raise PoloInternalException("Error during internal communication. %s" % reason)
         except PoloInternalException as e:
             error = e
 
         except AttributeError as a:
-            error = PoloInternalException("Error during internal communication")
+            reason = "AttributeError"
+            error = PoloInternalException("Error during internal communication %s" % reason)
 
         if error is not None:
             raise error
@@ -308,8 +313,7 @@ class Polo(object):
                                 "service": service, 
                                 "multicast_groups":[g for g in multicast_groups], 
                                 "delete_file": delete_file,
-                                "uid": os.geteuid()} #TODO: Delete UID
-
+                                "uid": os.geteuid()}
         error = False
         try:
             message_str = json.JSONEncoder(allow_nan=False).encode(message_dict) # https://docs.python.org/2/library/json.html#infinite-and-nan-number-values

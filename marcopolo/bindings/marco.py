@@ -3,7 +3,7 @@ from __future__ import absolute_import
 import json, socket, sys
 
 from marcopolo.bindings.utils import Node
-
+from marcopolo.marco import conf
 TIMEOUT = 1000
 MULTICAST_GROUP = '224.0.0.112'
 
@@ -217,7 +217,7 @@ class Marco(object):
         #if sys.version_info[0] < 3:
         self.marco_socket.sendto(bytes(json.dumps({"Command": "Services",
              "node": node,
-             "timeout":timeout}).encode('utf-8')), ('127.0.1.1', conf.POLOPORT))
+             "timeout":timeout}).encode('utf-8')), ('127.0.1.1', 1338))
         #else:
         #     self.marco_socket.sendto(bytes(json.dumps({"Command": "Services",
         #     "node": node,
@@ -247,9 +247,13 @@ class Marco(object):
         pass
 
 class MarcoTimeOutException(Exception):
+    """
+    Raised if a timeout occurs
+    """
     pass
 
 class MarcoInternalError(Exception):
+    """
+    Raised if an internal exception occurs
+    """
     pass
-
-#Todo: see sphinx

@@ -26,7 +26,7 @@ if __name__ == "__main__":
         name='marcopolo.bindings',
         namespace_packages=['marcopolo'],
         provides=["marcopolo.bindings"],
-        version='0.0.2',
+        version='0.1.2',
 
         description='A python binding for MarcoPolo',
 
@@ -58,4 +58,8 @@ if __name__ == "__main__":
         keywords="marcopolo discovery binding",
 
         packages=find_packages(),
+        install_requires=[
+            'marcopolo>=0.0.1',
+            'six>=1.6.0'
+        ],
     ) 
