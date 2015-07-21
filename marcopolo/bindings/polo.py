@@ -22,6 +22,7 @@ class Polo(object):
         self.polo_socket.settimeout(TIMEOUT/1000.0)
         self.wrappedSocket = ssl.wrap_socket(self.polo_socket, ssl_version=ssl.PROTOCOL_SSLv23)#, ciphers="ADH-AES256-SHA")
         error = False
+        error_reason = ""
         if not testing:
             try:
                 self.wrappedSocket.connect((HOST, PORT))
@@ -29,7 +30,7 @@ class Polo(object):
                 error = True
                 error_reason = e
             if error is True:
-                raise PoloInternalException(str(e))
+                raise PoloInternalException(str(error_reason))
 
     def __del__(self):
         self.wrappedSocket.close()
