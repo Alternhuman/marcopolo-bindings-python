@@ -26,7 +26,7 @@ if __name__ == "__main__":
         name='marcopolo.bindings',
         namespace_packages=['marcopolo'],
         provides=["marcopolo.bindings"],
-        version='0.1.2',
+        version='0.1.3',
 
         description='A python binding for MarcoPolo',
 
