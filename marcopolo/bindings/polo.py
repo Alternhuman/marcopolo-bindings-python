@@ -72,7 +72,7 @@ class Polo(object):
 
     def publish_service(self, service, params={}, multicast_groups=conf.MULTICAST_ADDRS, permanent=False, root=False):
         """
-        Registers a service during execution time. See :ref:`/services/intro/`.
+        Registers a service during execution time. See :doc:`/services/intro/`.
         
         :param string service: Indicates the unique identifier of the service.
         

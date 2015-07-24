@@ -44,7 +44,7 @@ class Marco(object):
         **C++ std::vector<node> marco(int timeout)**
 
         **Java ArrayList<Node> marco(int timeout)**
-
+        
         Sends a `marco` message to all nodes, which reply with a Polo message. Upon receiving all responses (those which arrived before the timeout), a collection of the response information is returned.
         
         :param int max_nodes: Maximum number of nodes to be returned. If set to `None`, no limit is applied.
